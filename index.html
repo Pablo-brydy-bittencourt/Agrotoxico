@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agrotóxicos e Sustentabilidade - Jogo Educativo</title>
+<style>
+/* Reset e estilos gerais */
+body {
+    margin: 0;
+    font-family: 'Poppins', Arial, sans-serif;
+    background: linear-gradient(to bottom, #e0f7fa, #f0fff0);
+    color: #333;
+    line-height: 1.6;
+}
+
+header {
+    background: linear-gradient(135deg, #2e7d32, #66bb6a);
+    color: white;
+    text-align: center;
+    padding: 40px 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.4em;
+}
+
+section {
+    max-width: 1000px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* Imagens e vídeos */
+img {
+    width: 100%;
+    max-width: 600px;
+    display: block;
+    margin: 25px auto;
+    border-radius: 15px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+iframe {
+    border-radius: 15px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+/* Botão */
+button {
+    display: block;
+    margin: 40px auto;
+    padding: 15px 35px;
+    font-size: 18px;
+    font-weight: bold;
+    background: linear-gradient(to right, #2e7d32, #81c784);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    background: linear-gradient(to right, #1b5e20, #4caf50);
+}
+
+/* Quiz */
+#game {
+    display: none;
+    max-width: 1000px;
+    margin: auto;
+    padding: 20px;
+    background: #ffffffcc;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+#hud {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f1f8e9;
+    padding: 15px 20px;
+    border-radius: 12px;
+    font-weight: bold;
+    border: 1px solid #c8e6c9;
+    margin-bottom: 25px;
+}
+
+#caixas-tema {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.caixa {
+    background: linear-gradient(to bottom right, #c8f7c5, #a5d6a7);
+    border-radius: 20px;
+    padding: 25px 15px;
+    text-align: center;
+    cursor: pointer;
+    border: 2px solid #2e7d32;
+    transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.caixa:hover {
+    transform: translateY(-5px) scale(1.03);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+    background: linear-gradient(to bottom right, #b2f0ae, #81c784);
+}
+
+.caixa span.emoji {
+    font-size: 40px;
+    display: block;
+    margin-bottom: 10px;
+}
+
+#pergunta-container {
+    margin-top: 30px;
+    padding: 25px;
+    border-radius: 20px;
+    background: #ffffff;
+    border: 1px solid #c8e6c9;
+    display: none;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+}
+
+#pergunta-texto {
+    font-weight: bold;
+    margin-bottom: 20px;
+    font-size: 1.2em;
+}
+
+.opcao {
+    display: block;
+    width: 100%;
+    text-align: left;
+    margin: 10px 0;
+    padding: 12px 15px;
+    border-radius: 10px;
+    border: 1px solid #2e7d32;
+    background: #e8f5e9;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+.opcao:hover {
+    background: #c8e6c9;
+    transform: translateX(5px);
+}
+
+#feedback {
+    margin-top: 15px;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+#mensagem-final {
+    margin-top: 25px;
+    padding: 20px;
+    border-radius: 20px;
+    background: linear-gradient(to right, #81d4fa, #e1f5fe);
+    display: none;
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+#mensagens-laterais {
+    margin-top: 20px;
+    font-size: 15px;
+    background: #f1f8e9;
+    padding: 12px 15px;
+    border-radius: 15px;
+    border: 1px dashed #2e7d32;
+    text-align: center;
+    font-style: italic;
+    color: #33691e;
+}
+</style>
+</head>
+<body>
+
+<header>
+    <h1>🌱 Agrotóxicos, Sustentabilidade e Consumo Consciente</h1>
+</header>
+
+<section id="intro">
+
+     <h2>O que são agrotóxicos?</h2>
+
+    <p>
+   Agrotóxicos são produtos químicos, físicos ou biológicos usados na agricultura para matar ou controlar pragas, doenças e plantas daninhas. Embora a indústria os chame de "defensivos agrícolas", o termo reconhece a toxicidade dessas substâncias. O uso inadequado contamina alimentos, solo e água, oferecendo sérios riscos à saúde humana e ao meio ambiente
+    </p>
+
+    <p>
+    Quando usados de forma <strong>controlada e com orientação técnica</strong>, podem ajudar o agricultor
+    a garantir colheitas mais estáveis. Porém, o uso <strong>excessivo ou inadequado</strong> traz diversos problemas:
+    </p>
+
+    <ul>
+        <li><strong>Meio ambiente:</strong> contaminam o solo, os rios, lagos e lençóis freáticos.</li>
+        <li><strong>Biodiversidade:</strong> podem matar insetos importantes, como abelhas, e outros animais.</li>
+        <li><strong>Saúde humana:</strong> resíduos em alimentos e na água podem causar alergias, intoxicações e, em alguns casos, doenças mais graves.</li>
+    </ul>
+
+    <p><strong>Por que são usados?</strong> Para proteger as plantações, reduzir perdas e aumentar a produção de alimentos, principalmente em grandes monoculturas.</p>
+
+    <p><strong>Impactos principais:</strong> contaminação de solo e água, prejuízos à fauna e flora, presença de resíduos em frutas, verduras e grãos que consumimos no dia a dia.</p>
+
+    <img src="https://revistapesquisa.fapesp.br/wp-content/uploads/2018/09/018-023_CAPA_Agrot%C3%B3xicos_271-1800px-3.jpg" alt="Plantação agrícola">
+
+    <h2>O que é sustentabilidade?</h2>
+
+    <p>
+Sustentabilidade é a capacidade de atender às necessidades do presente sem comprometer os recursos e a capacidade das gerações futuras. É um modelo de equilíbrio focado em utilizar os recursos naturais de forma consciente, promovendo o desenvolvimento social e garantindo a viabilidade econômica, entre:
+    </p>
+    <ul>
+        <li><strong>Desenvolvimento econômico:</strong> geração de renda, empregos e produção de bens.</li>
+        <li><strong>Preservação ambiental:</strong> cuidado com florestas, rios, animais e clima.</li>
+        <li><strong>Bem-estar social:</strong> qualidade de vida, saúde, educação e justiça social.</li>
+    </ul>
+
+    <p>
+    O objetivo é garantir que os recursos naturais (água, solo, ar, biodiversidade)
+    continuem disponíveis para as <strong>futuras gerações</strong>, e não sejam esgotados no presente.
+    </p>
+
+    <p><strong>Exemplos de práticas sustentáveis:</strong></p>
+    <ul>
+        <li>Uso consciente da água (evitar desperdício, reaproveitamento de água da chuva).</li>
+        <li>Reflorestamento e proteção de nascentes.</li>
+        <li>Reciclagem e redução do lixo produzido.</li>
+        <li>Uso de energias renováveis, como solar e eólica.</li>
+        <li>Agricultura que respeita o solo e a biodiversidade.</li>
+    </ul>
+
+    <img src="https://meiosustentavel.com.br/wp-content/uploads/2019/08/Lixeiras-Reciclaveis-01-1024x568.png" alt="Natureza sustentável">
+
+    <h2>O que é consumo consciente?</h2>
+
+    <p>
+   Consumo consciente é a prática de fazer escolhas de compra que priorizam o bem-estar social, econômico e ambiental. Significa avaliar o impacto de um produto desde a sua fabricação até o descarte, equilibrando suas necessidades reais com a sustentabilidade do planeta.
+    ela se pergunta:
+    </p>
+
+    <ul>
+        <li>Eu realmente preciso disso?</li>
+        <li>Como esse produto foi produzido? Respeita o meio ambiente e os trabalhadores?</li>
+        <li>Existe uma versão mais sustentável ou com menos impacto?</li>
+    </ul>
+
+    <p><strong>Exemplos de consumo consciente:</strong></p>
+    <ul>
+        <li>Comprar alimentos orgânicos ou de pequenos produtores locais.</li>
+        <li>Evitar desperdício de comida, água e energia.</li>
+        <li>Reaproveitar, consertar e reciclar em vez de sempre comprar novo.</li>
+        <li>Dar preferência a produtos com menos embalagens ou embalagens recicláveis.</li>
+    </ul>
+
+    <img src="https://images.unsplash.com/photo-1542838132-92c53300491e" alt="Alimentos saudáveis">
+
+    <h2>Por que esse tema é importante?</h2>
+
+    <p>
+    Nossas escolhas diárias – o que comemos, o que compramos, como usamos água e energia –
+    <strong>impactam diretamente o meio ambiente, a nossa saúde e a sociedade</strong>.
+    </p>
+
+    <p>
+    Ao praticar consumo consciente e apoiar a agricultura sustentável, podemos:
+    </p>
+    <ul>
+        <li>Reduzir a poluição do ar, da água e do solo.</li>
+        <li>Preservar florestas, animais e a biodiversidade.</li>
+        <li>Garantir alimentos mais saudáveis, com menos agrotóxicos.</li>
+        <li>Contribuir para um futuro mais justo e equilibrado para todos.</li>
+    </ul>
+
+<h2>Vídeo Educativo</h2>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/Rqq2IM25Fp8?si=8jdKdCbz2wc0KQz9" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+    <button onclick="startGame()">🎮 Começar Jogo</button>
+
+</section>
+
+<section id="game">
+    <div id="hud">
+        <div>
+            Pontos: <span id="score">0</span>
+        </div>
+        <div>
+            Perguntas respondidas: <span id="respondidas">0</span> / <span id="total-perguntas">0</span>
+        </div>
+    </div>
+
+    <div id="mensagens-laterais">
+        🌍 Clique em uma caixa para responder a uma pergunta sobre o tema.
+    </div>
+
+    <div id="caixas-tema">
+        <div class="caixa" data-tema="agrotoxicos">
+            <span class="emoji">☠️</span>
+            <strong>Agrotóxicos</strong>
+            <small>(impactos e usos)</small>
+        </div>
+        <div class="caixa" data-tema="sustentabilidade">
+            <span class="emoji">🌱</span>
+            <strong>Sustentabilidade</strong>
+            <small>(meio ambiente e futuro)</small>
+        </div>
+        <div class="caixa" data-tema="consumo">
+            <span class="emoji">🛒</span>
+            <strong>Consumo consciente</strong>
+            <small>(escolhas do dia a dia)</small>
+        </div>
+        <div class="caixa" data-tema="geral">
+            <span class="emoji">🌍</span>
+            <strong>Geral</strong>
+            <small>(mistura de temas)</small>
+        </div>
+    </div>
+
+    <div id="pergunta-container">
+        <div id="pergunta-texto"></div>
+        <div id="opcoes"></div>
+        <div id="feedback"></div>
+    </div>
+
+    <div id="mensagem-final"></div>
+</section>
+
+<script>
+// Função para iniciar o jogo
+function startGame() {
+    document.getElementById("intro").style.display = "none";
+    document.getElementById("game").style.display = "block";
+}
+
+// Perguntas do quiz
+const perguntas = [
+    // Agrotóxicos
+    {
+        tema: "agrotoxicos",
+        pergunta: "Qual é um dos principais riscos do uso excessivo de agrotóxicos?",
+        opcoes: [
+            "Aumentar a biodiversidade no campo",
+            "Contaminar solo, água e alimentos",
+            "Diminuir a produtividade agrícola",
+            "Melhorar a qualidade do ar"
+        ],
+        correta: 1,
+        explicacao: "O uso excessivo pode contaminar solo, água e alimentos, afetando a saúde e a biodiversidade."
+    },
+    {
+        tema: "agrotoxicos",
+        pergunta: "Por que muitos agricultores usam agrotóxicos?",
+        opcoes: [
+            "Para colorir as plantas",
+            "Para controlar pragas e doenças",
+            "Para diminuir a produção de alimentos",
+            "Para substituir adubos orgânicos"
+        ],
+        correta: 1,
+        explicacao: "Agrotóxicos são usados para controlar pragas, doenças e plantas invasoras."
+    },
+    // Sustentabilidade
+    {
+        tema: "sustentabilidade",
+        pergunta: "Sustentabilidade busca equilibrar:",
+        opcoes: [
+            "Economia, moda e esportes",
+            "Tecnologia, política e arte",
+            "Desenvolvimento econômico, ambiente e bem-estar social",
+            "Internet, transporte e comunicação"
+        ],
+        correta: 2,
+        explicacao: "Sustentabilidade é o equilíbrio entre economia, ambiente e sociedade."
+    },
+    {
+        tema: "sustentabilidade",
+        pergunta: "Qual é um exemplo de prática sustentável?",
+        opcoes: [
+            "Deixar torneiras abertas",
+            "Desmatar para plantar mais",
+            "Reutilizar e reciclar materiais",
+            "Jogar lixo em rios"
+        ],
+        correta: 2,
+        explicacao: "Reutilizar e reciclar materiais é uma prática que preserva recursos naturais."
+    },
+    // Consumo consciente
+    {
+        tema: "consumo",
+        pergunta: "O que é consumo consciente?",
+        opcoes: [
+            "Comprar o máximo possível",
+            "Comprar sem pensar no meio ambiente",
+            "Escolher produtos considerando impactos sociais e ambientais",
+            "Nunca comprar nada novo"
+        ],
+        correta: 2,
+        explicacao: "Consumo consciente considera impactos ambientais e sociais de cada compra."
+    },
+    {
+        tema: "consumo",
+        pergunta: "Qual atitude representa consumo consciente?",
+        opcoes: [
+            "Desperdiçar alimentos",
+            "Preferir produtos de produtores locais",
+            "Usar sacolas plásticas sempre",
+            "Trocar de celular todo mês"
+        ],
+        correta: 1,
+        explicacao: "Apoiar produtores locais reduz impactos de transporte e fortalece a economia local."
+    },
+    // Geral
+    {
+        tema: "geral",
+        pergunta: "Uma forma de reduzir o uso de agrotóxicos é:",
+        opcoes: [
+            "Plantar mais monoculturas",
+            "Aumentar o uso de fertilizantes químicos",
+            "Adotar agricultura orgânica e integrada",
+            "Desmatar para expandir lavouras"
+        ],
+        correta: 2,
+        explicacao: "Agricultura orgânica e integrada busca reduzir ou eliminar agrotóxicos."
+    },
+    {
+        tema: "geral",
+        pergunta: "Escolher alimentos orgânicos pode ajudar porque:",
+        opcoes: [
+            "Sempre são mais baratos",
+            "Nunca usam água",
+            "Geralmente têm menos agrotóxicos",
+            "São feitos apenas em laboratório"
+        ],
+        correta: 2,
+        explicacao: "A produção orgânica evita o uso de agrotóxicos sintéticos."
+    }
+];
+
+const dicas = [
+    "🌱 Agricultura orgânica reduz o uso de agrotóxicos.",
+    "💧 Fechar a torneira ao escovar os dentes economiza água.",
+    "♻️ Separar lixo reciclável ajuda a reduzir a poluição.",
+    "🍎 Prefira alimentos de produtores locais e da estação.",
+    "🌍 Pequenas escolhas diárias geram grandes impactos no meio ambiente."
+];
+
+let score = 0;
+let respondidas = 0;
+
+const scoreSpan = document.getElementById("score");
+const respSpan = document.getElementById("respondidas");
+const totalSpan = document.getElementById("total-perguntas");
+const caixas = document.querySelectorAll(".caixa");
+const perguntaContainer = document.getElementById("pergunta-container");
+const perguntaTexto = document.getElementById("pergunta-texto");
+const opcoesDiv = document.getElementById("opcoes");
+const feedbackDiv = document.getElementById("feedback");
+const msgFinalDiv = document.getElementById("mensagem-final");
+const mensagensLaterais = document.getElementById("mensagens-laterais");
+
+// total de perguntas (todas do array)
+totalSpan.textContent = perguntas.length;
+
+// Sorteio de pergunta por tema
+function pegarPerguntaPorTema(tema) {
+    const filtradas = perguntas.filter(p => p.tema === tema || tema === "geral");
+    if (filtradas.length === 0) return null;
+    return filtradas[Math.floor(Math.random() * filtradas.length)];
+}
+
+let perguntaAtual = null;
+let perguntaRespondida = false;
+
+function mostrarPergunta(tema) {
+    perguntaAtual = pegarPerguntaPorTema(tema);
+    if (!perguntaAtual) return;
+
+    perguntaContainer.style.display = "block";
+    feedbackDiv.textContent = "";
+    perguntaRespondida = false;
+
+    perguntaTexto.textContent = perguntaAtual.pergunta;
+    opcoesDiv.innerHTML = "";
+
+    perguntaAtual.opcoes.forEach((opcao, index) => {
+        const btn = document.createElement("button");
+        btn.classList.add("opcao");
+        btn.textContent = opcao;
+        btn.onclick = () => responder(index);
+        opcoesDiv.appendChild(btn);
+    });
+}
+
+function responder(indice) {
+    if (perguntaRespondida) return; // evita responder mais de uma vez
+    perguntaRespondida = true;
+    respondidas++;
+    respSpan.textContent = respondidas;
+
+    if (indice === perguntaAtual.correta) {
+        score += 10;
+        feedbackDiv.style.color = "green";
+        feedbackDiv.textContent = "✔ Resposta correta! " + perguntaAtual.explicacao;
+    } else {
+        score -= 5;
+        feedbackDiv.style.color = "red";
+        feedbackDiv.textContent = "✖ Resposta incorreta. " + perguntaAtual.explicacao;
+    }
+    scoreSpan.textContent = score;
+
+    // Se quiser, pode definir um número máximo de perguntas para encerrar o jogo:
+    if (respondidas >= perguntas.length) {
+        finalizarJogo();
+    }
+}
+
+function finalizarJogo() {
+    msgFinalDiv.style.display = "block";
+    msgFinalDiv.innerHTML = `
+        <strong>Fim do quiz!</strong><br>
+        Sua pontuação final foi: <strong>${score}</strong> pontos.<br>
+        Lembre-se: escolhas conscientes ajudam a construir um futuro sustentável! 🌱
+    `;
+}
+
+// Evento de clique nas caixas
+caixas.forEach(caixa => {
+    caixa.addEventListener("click", () => {
+        const tema = caixa.getAttribute("data-tema");
+        mostrarPergunta(tema);
+    });
+});
+
+// Mensagens de dicas rotativas
+setInterval(() => {
+    const dica = dicas[Math.floor(Math.random() * dicas.length)];
+    mensagensLaterais.textContent = dica;
+}, 6000);
+</script>
+</body>
+</html>
